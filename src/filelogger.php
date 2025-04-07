@@ -14,6 +14,7 @@ class FileLogger extends Logger
 
 	protected $maxRowsToCache = 100;
 	protected $maxMessageLength = 1000;
+    protected $logTime = true;
 
 	public function __construct($logFileName) 
     {
@@ -69,7 +70,12 @@ class FileLogger extends Logger
 			foreach ($this->rows as $row) 
             {
 				$formattedTime = date(\DateTimeInterface::ISO8601, $row['time']);
-				fwrite($fp, $formattedTime.' '.$row['type'].': '.$row['message']."\n");
+                $tstr = '';
+                if($this->logTime)
+                {
+                    $tstr .= $formattedTime.' ';
+                }
+				fwrite($fp, $tstr.$row['type'].': '.$row['message']."\n");
 			}
 			fclose($fp);
 			unset($this->rows);
@@ -226,5 +232,24 @@ class FileLogger extends Logger
 	{
 		return $this->maxMessageLength;
 	}
+
+
+    /**
+     * Get if time is logged
+     * @return bool True if time is logged, false otherwise.
+     */
+    public function getLogTime()
+    {
+        return $this->logTime;
+    }
+
+    /**
+     * Set if time should be logged. Default is true.
+     * @param bool $logTime
+     */
+    public function setLogTime($logTime)
+    {
+        $this->logTime = !!$logTime;
+    }
 }
 

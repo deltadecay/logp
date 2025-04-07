@@ -58,6 +58,7 @@ test("file logger defaults", function() {
     expect($flogger->getLogFileName())->toBe($tmpfile);
     expect($flogger->getFileSizeLimit())->toBe(1048576);
     expect($flogger->getMaxMessageLength())->toBe(1000);
+    expect($flogger->getLogTime())->toBeTruthy();
 
     //unlink($tmpfile);
     // The FileLogger saves the file when it goes out of scope
