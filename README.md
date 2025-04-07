@@ -30,7 +30,7 @@ $flogger = \logp\FileLogger($logfilename);
 $flogger->setEchoLogging(true);
 
 // Following are the defaults
-// Number of messages to log before flushing to file
+// Number of messages to cache before flushing to file
 $flogger->setMaxRowsToCache(100);
 // Set number of historical log files to keep
 $flogger->setNumLogFileCopiesToKeep(5);
