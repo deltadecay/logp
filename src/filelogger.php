@@ -102,8 +102,8 @@ class FileLogger extends Logger
 	}
 
 	/**
-	 * Set the log file size limit.
-	 * @param int $fileSizeLimit
+	 * Set the log file size limit in bytes.
+	 * @param int $fileSizeLimit The file size in bytes.
 	 */
 	public function setFileSizeLimit($fileSizeLimit)
 	{
@@ -124,7 +124,7 @@ class FileLogger extends Logger
 	/**
 	 * Get the size limit for a log file. Once it is above, the next time the log is saved the log is renamed
 	 * and a new empty log file is created.
-	 * @return int
+	 * @return int The log file size limit in bytes.
 	 */
 	public function getFileSizeLimit()
 	{
@@ -133,7 +133,7 @@ class FileLogger extends Logger
 
 	/**
 	 * Get the name of the log file.
-	 * @return string
+	 * @return string Name of the log file
 	 */
 	public function getLogFileName()
 	{
@@ -142,7 +142,7 @@ class FileLogger extends Logger
 
 
 	/**
-	 * Set the number of log files to keep.
+	 * Set the number of historical log files to keep.
 	 * @param int $numLogFileCopiesToKeep
 	 */
 	public function setNumLogFileCopiesToKeep($numLogFileCopiesToKeep)
@@ -157,16 +157,16 @@ class FileLogger extends Logger
         {
 			$numLogFileCopiesToKeep = 0;
 		}
-		if ($numLogFileCopiesToKeep > 9) 
+		if ($numLogFileCopiesToKeep > 100) 
         {
-			$numLogFileCopiesToKeep = 9;
+			$numLogFileCopiesToKeep = 100;
 		}
 		$this->numLogFileCopiesToKeep = $numLogFileCopiesToKeep;
 	}
 
 	/**
-	 * Get the number of log file copies that is being kept.
-	 * @return int
+	 * Get the number of historical log files that is being kept.
+	 * @return int Number of historical log files
 	 */
 	public function getNumLogFileCopiesToKeep()
 	{
@@ -198,7 +198,7 @@ class FileLogger extends Logger
 
 	/**
 	 * Get the max number of rows that are being cached before saved to file.
-	 * @return int
+	 * @return int Max rows to cache
 	 */
 	public function getMaxRowsToCache()
 	{
@@ -207,7 +207,7 @@ class FileLogger extends Logger
 
 	/**
 	 * Set the max message length to log. Message longer will be truncated and an ellipsis added (...)
-	 * @param int $maxMessageLength
+	 * @param int $maxMessageLength max message length
 	 */
 	public function setMaxMessageLength($maxMessageLength)
 	{
@@ -226,7 +226,7 @@ class FileLogger extends Logger
 
 	/**
 	 * Get the max message length being logged.
-	 * @return int
+	 * @return int Max message length
 	 */
 	public function getMaxMessageLength()
 	{

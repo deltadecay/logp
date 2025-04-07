@@ -53,6 +53,7 @@ test("file logger defaults", function() {
     $flogger = new \logp\FileLogger($tmpfile);
 
     expect($flogger->getEchoLogging())->toBeFalsy();
+    expect($flogger->getNumLogFileCopiesToKeep())->toBe(5);
     expect($flogger->getMaxRowsToCache())->toBeGreaterThan(0);
     expect($flogger->getMaxRowsToCache())->toBe(100);
     expect($flogger->getLogFileName())->toBe($tmpfile);

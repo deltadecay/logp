@@ -18,7 +18,7 @@ class Logger
 
 	/**
 	 * Log an error message.
-	 * @param string $message
+	 * @param string $message the message to log
 	 */
 	public function error($message) 
     {
@@ -27,7 +27,7 @@ class Logger
 
 	/**
 	 * Log a warning message.
-	 * @param string $message
+	 * @param string $message the message to log
 	 */
 	public function warn($message) 
     {
@@ -36,7 +36,7 @@ class Logger
 
 	/**
 	 * Log a message.
-	 * @param string $message
+	 * @param string $message the message to log
 	 */
 	public function log($message) 
     {
@@ -45,7 +45,7 @@ class Logger
 
 	/**
 	 * Set whether the logging should echo to screen.
-	 * @param bool $echoLogging
+	 * @param bool $echoLogging set to true if logging should echo to stdout.
 	 */
 	public function setEchoLogging($echoLogging)
 	{
@@ -53,8 +53,8 @@ class Logger
 	}
 
 	/**
-	 * Get whether logging is echoed to screen.
-	 * @return bool
+	 * Get whether logging is echoed to stdout.
+	 * @return bool true if logging is echoed to stdout
 	 */
 	public function getEchoLogging()
 	{
