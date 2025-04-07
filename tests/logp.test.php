@@ -8,6 +8,11 @@ require_once(__DIR__."/../../pest/pest.php");
 use function \pest\test;
 use function \pest\expect;
 
+test("logger defaults", function() {
+    $alogger = new \logp\Logger();
+
+    expect($alogger->getEchoLogging())->toBeTruthy();
+});
 
 test("Call log with a message outputs message", function() {
     ob_start();
@@ -39,16 +44,32 @@ test("set and get logger", function() {
     expect($current)->toBeEqual($alogger);
 });
 
+test("file logger defaults", function() {
+    $tmpfile = tempnam(__DIR__, "log_");
+    //echo $tmpfile;
+    expect($tmpfile)->not()->toBeFalsy();
+    expect(strlen($tmpfile))->toBeGreaterThan(0);
+
+    $flogger = new \logp\FileLogger($tmpfile);
+
+    expect($flogger->getEchoLogging())->toBeFalsy();
+    expect($flogger->getMaxRowsToCache())->toBeGreaterThan(0);
+    expect($flogger->getMaxRowsToCache())->toBe(100);
+    expect($flogger->getLogFileName())->toBe($tmpfile);
+    expect($flogger->getFileSizeLimit())->toBe(1048576);
+    expect($flogger->getMaxMessageLength())->toBe(1000);
+
+    //unlink($tmpfile);
+    // The FileLogger saves the file when it goes out of scope
+    // so we must register shutdown which removes the tmp file 
+    register_shutdown_function("unlink", $tmpfile);
+});
 
 test("file logger", function() {
     // Create a tmp log file and a FileLogger
     // Test logging two rows
 
     $tmpfile = tempnam(__DIR__, "log_");
-    expect($tmpfile)->not()->toBeFalsy();
-    expect(strlen($tmpfile))->toBeGreaterThan(0);
-
-    //echo $tmpfile;
     $flogger = new \logp\FileLogger($tmpfile);
     expect($flogger->getEchoLogging())->toBeFalsy();
     expect($flogger->getMaxRowsToCache())->toBeGreaterThan(2);
@@ -87,7 +108,7 @@ test("file logger", function() {
     // Now read contents and we should have two log messages
     $logcontents = file_get_contents($tmpfile);
     expect($logcontents)->not()->toBe("");
-    
+
     $lines = explode("\n", $logcontents);
 
     expect($lines[0])->toMatch("/LOG: Log 1st message!/i");

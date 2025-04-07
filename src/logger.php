@@ -6,7 +6,7 @@ namespace logp;
 
 class Logger 
 {
-	protected $echoLogging = false;
+	protected $echoLogging = true;
 
 	protected function internal_log($message, $type) 
     {

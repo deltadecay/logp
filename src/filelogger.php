@@ -18,6 +18,7 @@ class FileLogger extends Logger
 	public function __construct($logFileName) 
     {
 		$this->logFileName = $logFileName;
+        $this->setEchoLogging(false);
 		register_shutdown_function([$this, '__destruct']);
 	}
 
