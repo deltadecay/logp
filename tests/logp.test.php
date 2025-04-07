@@ -122,3 +122,38 @@ test("file logger", function() {
     register_shutdown_function("unlink", $tmpfile);
 });
 
+test("log file history", function() {
+    // Create a tmp log file and a FileLogger
+    // Write enough logs so that one history log file is created
+
+    $logfile = tempnam(__DIR__, "log_");
+    $flogger = new \logp\FileLogger($logfile);
+    $flogger->setMaxRowsToCache(0);
+
+    // Set file size limit, including timestamp
+    // Note! Depending on the cache size and log message size
+    // the file can get bigger. The test on filesize is only done on save
+    $flogger->setFileSizeLimit(1000);
+
+    \logp\setlogger($flogger);
+
+    $nmessages = 15;
+    while($nmessages-- > 0)
+    {
+        $msg = str_repeat("A Log Msg ", 10);
+        \logp\log($msg);
+    }
+
+    // Flush
+    $flogger->save();
+
+    // Make sure there are two log files
+    expect(file_exists($logfile))->toBeTruthy();
+    expect(file_exists($logfile.".1"))->toBeTruthy();
+
+    // Remove the log files
+    register_shutdown_function(function() use($logfile) {
+        unlink($logfile);
+        unlink($logfile.".1");
+    });
+});
