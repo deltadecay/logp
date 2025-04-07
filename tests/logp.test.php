@@ -116,7 +116,6 @@ test("file logger", function() {
     expect($lines[0])->toMatch("/LOG: Log 1st message!/i");
     expect($lines[1])->toMatch("/LOG: Log 2nd message!/i");
 
-    //unlink($tmpfile);
     // The FileLogger saves the file when it goes out of scope
     // so we must register shutdown which removes the tmp file 
     register_shutdown_function("unlink", $tmpfile);
@@ -149,9 +148,11 @@ test("log file history", function() {
 
     // Make sure there are two log files
     expect(file_exists($logfile))->toBeTruthy();
+    // The older file has a number appended to it
     expect(file_exists($logfile.".1"))->toBeTruthy();
 
-    // Remove the log files
+    // The FileLogger saves the file when it goes out of scope
+    // so we must register shutdown which removes the log files 
     register_shutdown_function(function() use($logfile) {
         unlink($logfile);
         unlink($logfile.".1");
