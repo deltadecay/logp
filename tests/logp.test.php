@@ -46,6 +46,11 @@ test("set and get logger", function() {
 
 test("file logger defaults", function() {
     $tmpfile = tempnam(__DIR__, "log_");
+    //unlink($tmpfile);
+    // The FileLogger saves the file when it goes out of scope
+    // so we must register shutdown which removes the tmp file 
+    register_shutdown_function("unlink", $tmpfile);
+
     //echo $tmpfile;
     expect($tmpfile)->not()->toBeFalsy();
     expect(strlen($tmpfile))->toBeGreaterThan(0);
@@ -61,10 +66,7 @@ test("file logger defaults", function() {
     expect($flogger->getMaxMessageLength())->toBe(1000);
     expect($flogger->getLogTime())->toBeTruthy();
 
-    //unlink($tmpfile);
-    // The FileLogger saves the file when it goes out of scope
-    // so we must register shutdown which removes the tmp file 
-    register_shutdown_function("unlink", $tmpfile);
+
 });
 
 test("file logger", function() {
@@ -72,6 +74,10 @@ test("file logger", function() {
     // Test logging two rows
 
     $tmpfile = tempnam(__DIR__, "log_");
+    // The FileLogger saves the file when it goes out of scope
+    // so we must register shutdown which removes the tmp file 
+    register_shutdown_function("unlink", $tmpfile);
+
     $flogger = new \logp\FileLogger($tmpfile);
     expect($flogger->getEchoLogging())->toBeFalsy();
     expect($flogger->getMaxRowsToCache())->toBeGreaterThan(2);
@@ -115,10 +121,6 @@ test("file logger", function() {
 
     expect($lines[0])->toMatch("/LOG: Log 1st message!/i");
     expect($lines[1])->toMatch("/LOG: Log 2nd message!/i");
-
-    // The FileLogger saves the file when it goes out of scope
-    // so we must register shutdown which removes the tmp file 
-    register_shutdown_function("unlink", $tmpfile);
 });
 
 test("log file history", function() {
@@ -126,6 +128,14 @@ test("log file history", function() {
     // Write enough logs so that one history log file is created
 
     $logfile = tempnam(__DIR__, "log_");
+    // The FileLogger saves the file when it goes out of scope
+    // so we must register shutdown which removes the log files 
+    register_shutdown_function(function() use($logfile) {
+        unlink($logfile);
+        if(file_exists($logfile.".1"))
+            unlink($logfile.".1");
+    });
+
     $flogger = new \logp\FileLogger($logfile);
     $flogger->setMaxRowsToCache(0);
 
@@ -150,11 +160,4 @@ test("log file history", function() {
     expect(file_exists($logfile))->toBeTruthy();
     // The older file has a number appended to it
     expect(file_exists($logfile.".1"))->toBeTruthy();
-
-    // The FileLogger saves the file when it goes out of scope
-    // so we must register shutdown which removes the log files 
-    register_shutdown_function(function() use($logfile) {
-        unlink($logfile);
-        unlink($logfile.".1");
-    });
 });

@@ -38,7 +38,7 @@ class FileLogger extends Logger
 
 		if (is_file($this->logFileName)) 
         {
-            clearstatcache();
+            clearstatcache(true, $this->logFileName);
 			$fileSize = filesize($this->logFileName);
 			if ($fileSize && ($fileSize > $this->fileSizeLimit)) 
             {
