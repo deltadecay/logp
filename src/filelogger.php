@@ -185,7 +185,7 @@ class FileLogger extends Logger
 
 	/**
 	 * Set whether history files will be compressed or not.
-	 * @param mixed $compress True to compress, false to not compress.
+	 * @param bool $compress True to compress, false to not compress.
 	 * @return void
 	 */
 	public function setCompressHistoryFiles($compress)

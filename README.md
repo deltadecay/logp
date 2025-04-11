@@ -33,7 +33,10 @@ $flogger->setEchoLogging(true);
 // Number of messages to cache before flushing to file
 $flogger->setMaxRowsToCache(100);
 // Set number of historical log files to keep
-$flogger->setNumLogFileCopiesToKeep(5);
+$flogger->setNumHistoryFilesToKeep(5);
+// Compress the historical log files
+$flogger->setCompressHistoryFiles(true);
+
 // Set size of a log file to 1Mb
 $flogger->setFileSizeLimit(1024*1024);
 // Set max length of a single message
