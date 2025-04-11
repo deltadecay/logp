@@ -7,7 +7,7 @@ require_once(__DIR__."/logger.php");
 class FileLogger extends Logger 
 {
 
-	protected $numLogFileCopiesToKeep = 5;
+	protected $numHistoryFilesToKeep = 5;
 	protected $compressHistoryFiles = true;
 	protected $fileSizeLimit = 1048576; // 1 Mb
 	protected $logFileName = 'logger.log';
@@ -45,13 +45,13 @@ class FileLogger extends Logger
             {
 				$cancompress = function_exists('gzencode');
 				$gzend = ($this->compressHistoryFiles && $cancompress) ? ".gz" : "";
-				for ($num=$this->numLogFileCopiesToKeep; $num>=1; $num--) 
+				for ($num=$this->numHistoryFilesToKeep; $num>=1; $num--) 
                 {
 					$backupFile = $this->logFileName.".".$num.$gzend;
 					$prevBackupFile = $this->logFileName.".".($num + 1).$gzend;
 					if (is_file($backupFile)) 
                     {
-						if ($num == $this->numLogFileCopiesToKeep) 
+						if ($num == $this->numHistoryFilesToKeep) 
                         {
 							// It's the last file, we won't keep it. It will be deleted
 							unlink($backupFile);
@@ -153,34 +153,34 @@ class FileLogger extends Logger
 
 	/**
 	 * Set the number of historical log files to keep.
-	 * @param int $numLogFileCopiesToKeep
+	 * @param int $numHistoryFilesToKeep
 	 */
-	public function setNumLogFileCopiesToKeep($numLogFileCopiesToKeep)
+	public function setNumHistoryFilesToKeep($numHistoryFilesToKeep)
 	{
-		if (!is_numeric($numLogFileCopiesToKeep)) 
+		if (!is_numeric($numHistoryFilesToKeep)) 
         {
-			$numLogFileCopiesToKeep = 0;
+			$numHistoryFilesToKeep = 0;
 		}
-		$numLogFileCopiesToKeep = (int)$numLogFileCopiesToKeep;
+		$numHistoryFilesToKeep = (int)$numHistoryFilesToKeep;
 
-		if ($numLogFileCopiesToKeep < 0) 
+		if ($numHistoryFilesToKeep < 0) 
         {
-			$numLogFileCopiesToKeep = 0;
+			$numHistoryFilesToKeep = 0;
 		}
-		if ($numLogFileCopiesToKeep > 100) 
+		if ($numHistoryFilesToKeep > 100) 
         {
-			$numLogFileCopiesToKeep = 100;
+			$numHistoryFilesToKeep = 100;
 		}
-		$this->numLogFileCopiesToKeep = $numLogFileCopiesToKeep;
+		$this->numHistoryFilesToKeep = $numHistoryFilesToKeep;
 	}
 
 	/**
 	 * Get the number of historical log files that is being kept.
 	 * @return int Number of historical log files
 	 */
-	public function getNumLogFileCopiesToKeep()
+	public function getNumHistoryFilesToKeep()
 	{
-		return $this->numLogFileCopiesToKeep;
+		return $this->numHistoryFilesToKeep;
 	}
 
 	/**

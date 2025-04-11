@@ -58,7 +58,7 @@ test("file logger defaults", function() {
     $flogger = new \logp\FileLogger($tmpfile);
 
     expect($flogger->getEchoLogging())->toBeFalsy();
-    expect($flogger->getNumLogFileCopiesToKeep())->toBe(5);
+    expect($flogger->getNumHistoryFilesToKeep())->toBe(5);
     expect($flogger->getCompressHistoryFiles())->toBeTruthy();
     expect($flogger->getMaxRowsToCache())->toBeGreaterThan(0);
     expect($flogger->getMaxRowsToCache())->toBe(100);
@@ -142,7 +142,7 @@ test("log file history", function() {
     $flogger = new \logp\FileLogger($logfile);
     $flogger->setMaxRowsToCache(0);
     $flogger->setCompressHistoryFiles(true);
-    $flogger->setNumLogFileCopiesToKeep(1);
+    $flogger->setNumHistoryFilesToKeep(1);
 
     // Set file size limit, including timestamp
     // Note! Depending on the cache size and log message size
