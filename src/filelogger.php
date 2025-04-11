@@ -15,17 +15,17 @@ class FileLogger extends Logger
 
 	protected $maxRowsToCache = 100;
 	protected $maxMessageLength = 1000;
-    protected $logTime = true;
+	protected $logTime = true;
 
 	public function __construct($logFileName) 
-    {
+	{
 		$this->logFileName = $logFileName;
-        $this->setEchoLogging(false);
+		$this->setEchoLogging(false);
 		register_shutdown_function([$this, '__destruct']);
 	}
 
 	public function __destruct() 
-    {
+	{
 		$this->save();
 	}
 
@@ -33,31 +33,31 @@ class FileLogger extends Logger
 	 * Save the log to the log file.
 	 */
 	public function save() 
-    {
+	{
 		if (count($this->rows) == 0)
 			return;
 
 		if (is_file($this->logFileName)) 
-        {
-            clearstatcache(true, $this->logFileName);
+		{
+			clearstatcache(true, $this->logFileName);
 			$fileSize = filesize($this->logFileName);
 			if ($fileSize && ($fileSize > $this->fileSizeLimit)) 
-            {
+			{
 				$cancompress = function_exists('gzencode');
 				$gzend = ($this->compressHistoryFiles && $cancompress) ? ".gz" : "";
 				for ($num=$this->numHistoryFilesToKeep; $num>=1; $num--) 
-                {
+				{
 					$backupFile = $this->logFileName.".".$num.$gzend;
 					$prevBackupFile = $this->logFileName.".".($num + 1).$gzend;
 					if (is_file($backupFile)) 
-                    {
+					{
 						if ($num == $this->numHistoryFilesToKeep) 
-                        {
+						{
 							// It's the last file, we won't keep it. It will be deleted
 							unlink($backupFile);
 						} 
-                        else 
-                        {
+						else 
+						{
 							rename($backupFile, $prevBackupFile);
 						}
 					}
@@ -76,15 +76,15 @@ class FileLogger extends Logger
 
 		$fp = fopen($this->logFileName, "a+");
 		if ($fp) 
-        {
+		{
 			foreach ($this->rows as $row) 
-            {
+			{
 				$formattedTime = date(\DateTimeInterface::ISO8601, $row['time']);
-                $tstr = '';
-                if($this->logTime)
-                {
-                    $tstr .= $formattedTime.' ';
-                }
+				$tstr = '';
+				if($this->logTime)
+				{
+					$tstr .= $formattedTime.' ';
+				}
 				fwrite($fp, $tstr.$row['type'].': '.$row['message']."\n");
 			}
 			fclose($fp);
@@ -95,18 +95,18 @@ class FileLogger extends Logger
 
 
 	public function internal_log($message, $type) 
-    {
+	{
 		parent::internal_log($message, $type);
 
 		// Respect the set max length of the message. Anything longer will be cut and (...) added.
 		if (strlen($message) > $this->maxMessageLength)
-        {
+		{
 			$message = substr($message, 0, $this->maxMessageLength-3)."...";
 		}
 		$this->rows[] = ['message' => $message, 'time' => time(), 'type' => $type];
 
 		if (count($this->rows) > $this->maxRowsToCache) 
-        {
+		{
 			$this->save();
 		}
 	}
@@ -118,13 +118,13 @@ class FileLogger extends Logger
 	public function setFileSizeLimit($fileSizeLimit)
 	{
 		if (!is_numeric($fileSizeLimit)) 
-        {
+		{
 			$fileSizeLimit = 1048576;
 		}
 		$fileSizeLimit = (int)$fileSizeLimit;
 
 		if ($fileSizeLimit < 512) 
-        {
+		{
 			$fileSizeLimit = 512;
 		}
 
@@ -158,17 +158,17 @@ class FileLogger extends Logger
 	public function setNumHistoryFilesToKeep($numHistoryFilesToKeep)
 	{
 		if (!is_numeric($numHistoryFilesToKeep)) 
-        {
+		{
 			$numHistoryFilesToKeep = 0;
 		}
 		$numHistoryFilesToKeep = (int)$numHistoryFilesToKeep;
 
 		if ($numHistoryFilesToKeep < 0) 
-        {
+		{
 			$numHistoryFilesToKeep = 0;
 		}
 		if ($numHistoryFilesToKeep > 100) 
-        {
+		{
 			$numHistoryFilesToKeep = 100;
 		}
 		$this->numHistoryFilesToKeep = $numHistoryFilesToKeep;
@@ -211,13 +211,13 @@ class FileLogger extends Logger
 	public function setMaxRowsToCache($maxRowsToCache)
 	{
 		if (!is_numeric($maxRowsToCache)) 
-        {
+		{
 			$maxRowsToCache = 0;
 		}
 		$maxRowsToCache = (int)$maxRowsToCache;
 
 		if ($maxRowsToCache < 0) 
-        {
+		{
 			$maxRowsToCache = 0;
 		}
 		$this->maxRowsToCache = $maxRowsToCache;
@@ -239,13 +239,13 @@ class FileLogger extends Logger
 	public function setMaxMessageLength($maxMessageLength)
 	{
 		if (!is_numeric($maxMessageLength)) 
-        {
+		{
 			$maxMessageLength = 1000;
 		}
 		$maxMessageLength = (int)$maxMessageLength;
 
 		if ($maxMessageLength < 40) 
-        {
+		{
 			$maxMessageLength = 40;
 		}
 		$this->maxMessageLength = $maxMessageLength;
@@ -261,22 +261,22 @@ class FileLogger extends Logger
 	}
 
 
-    /**
-     * Get if time is logged
-     * @return bool True if time is logged, false otherwise.
-     */
-    public function getLogTime()
-    {
-        return $this->logTime;
-    }
+	/**
+	 * Get if time is logged
+	 * @return bool True if time is logged, false otherwise.
+	 */
+	public function getLogTime()
+	{
+		return $this->logTime;
+	}
 
-    /**
-     * Set if time should be logged. Default is true.
-     * @param bool $logTime
-     */
-    public function setLogTime($logTime)
-    {
-        $this->logTime = !!$logTime;
-    }
+	/**
+	 * Set if time should be logged. Default is true.
+	 * @param bool $logTime
+	 */
+	public function setLogTime($logTime)
+	{
+		$this->logTime = !!$logTime;
+	}
 }
 

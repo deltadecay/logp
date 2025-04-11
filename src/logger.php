@@ -9,9 +9,9 @@ class Logger
 	protected $echoLogging = true;
 
 	protected function internal_log($message, $type) 
-    {
+	{
 		if ($this->echoLogging) 
-        {
+		{
 			echo "$type: ".$message, PHP_EOL;
 		}
 	}
@@ -21,7 +21,7 @@ class Logger
 	 * @param string $message the message to log
 	 */
 	public function error($message) 
-    {
+	{
 		$this->internal_log($message, 'ERROR');
 	}
 
@@ -30,7 +30,7 @@ class Logger
 	 * @param string $message the message to log
 	 */
 	public function warn($message) 
-    {
+	{
 		$this->internal_log($message, 'WARNING');
 	}
 
@@ -39,7 +39,7 @@ class Logger
 	 * @param string $message the message to log
 	 */
 	public function log($message) 
-    {
+	{
 		$this->internal_log($message, 'LOG');
 	}
 
