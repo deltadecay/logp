@@ -8,6 +8,7 @@ class FileLogger extends Logger
 {
 
 	protected $numLogFileCopiesToKeep = 5;
+	protected $compressHistoryFiles = true;
 	protected $fileSizeLimit = 1048576; // 1 Mb
 	protected $logFileName = 'logger.log';
 	protected $rows = [];
@@ -42,11 +43,12 @@ class FileLogger extends Logger
 			$fileSize = filesize($this->logFileName);
 			if ($fileSize && ($fileSize > $this->fileSizeLimit)) 
             {
-
+				$cancompress = function_exists('gzencode');
+				$gzend = ($this->compressHistoryFiles && $cancompress) ? ".gz" : "";
 				for ($num=$this->numLogFileCopiesToKeep; $num>=1; $num--) 
                 {
-					$backupFile = $this->logFileName.".".$num;
-					$prevBackupFile = $this->logFileName.".".($num + 1);
+					$backupFile = $this->logFileName.".".$num.$gzend;
+					$prevBackupFile = $this->logFileName.".".($num + 1).$gzend;
 					if (is_file($backupFile)) 
                     {
 						if ($num == $this->numLogFileCopiesToKeep) 
@@ -62,6 +64,13 @@ class FileLogger extends Logger
 				}
 				// The existing file is larger than limit, we rename it to xxxx.1
 				rename($this->logFileName, $this->logFileName.".1");
+				if($this->compressHistoryFiles && $cancompress)
+				{
+					$data = file_get_contents($this->logFileName.".1");
+					$gzdata = gzencode($data, 9);
+					file_put_contents($this->logFileName.".1".$gzend, $gzdata);
+					unlink($this->logFileName.".1");
+				}
 			}
 		}
 
@@ -174,6 +183,23 @@ class FileLogger extends Logger
 		return $this->numLogFileCopiesToKeep;
 	}
 
+	/**
+	 * Set whether history files will be compressed or not.
+	 * @param mixed $compress True to compress, false to not compress.
+	 * @return void
+	 */
+	public function setCompressHistoryFiles($compress)
+	{
+		$this->compressHistoryFiles = $compress;
+	}
+
+	/**
+	 * Return whether to compress history files or not.
+	 */
+	public function getCompressHistoryFiles()
+	{
+		return $this->compressHistoryFiles;
+	}
 
 
 	/**

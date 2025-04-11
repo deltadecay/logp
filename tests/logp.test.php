@@ -59,6 +59,7 @@ test("file logger defaults", function() {
 
     expect($flogger->getEchoLogging())->toBeFalsy();
     expect($flogger->getNumLogFileCopiesToKeep())->toBe(5);
+    expect($flogger->getCompressHistoryFiles())->toBeTruthy();
     expect($flogger->getMaxRowsToCache())->toBeGreaterThan(0);
     expect($flogger->getMaxRowsToCache())->toBe(100);
     expect($flogger->getLogFileName())->toBe($tmpfile);
@@ -123,6 +124,8 @@ test("file logger", function() {
     expect($lines[1])->toMatch("/LOG: Log 2nd message!/i");
 });
 
+
+
 test("log file history", function() {
     // Create a tmp log file and a FileLogger
     // Write enough logs so that one history log file is created
@@ -132,12 +135,14 @@ test("log file history", function() {
     // so we must register shutdown which removes the log files 
     register_shutdown_function(function() use($logfile) {
         unlink($logfile);
-        if(file_exists($logfile.".1"))
-            unlink($logfile.".1");
+        if(file_exists($logfile.".1.gz"))
+            unlink($logfile.".1.gz");
     });
 
     $flogger = new \logp\FileLogger($logfile);
     $flogger->setMaxRowsToCache(0);
+    $flogger->setCompressHistoryFiles(true);
+    $flogger->setNumLogFileCopiesToKeep(1);
 
     // Set file size limit, including timestamp
     // Note! Depending on the cache size and log message size
@@ -158,6 +163,6 @@ test("log file history", function() {
 
     // Make sure there are two log files
     expect(file_exists($logfile))->toBeTruthy();
-    // The older file has a number appended to it
-    expect(file_exists($logfile.".1"))->toBeTruthy();
+    // The older file has a number appended to it and is compressed
+    expect(file_exists($logfile.".1.gz"))->toBeTruthy();
 });
